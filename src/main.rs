@@ -1,72 +1,60 @@
 #![allow(non_snake_case)]
 
-use std::collections::VecDeque;
-
-fn inputInteger() -> usize {
+fn inputInteger() -> i32 {
     let mut tmp = String::new();
     std::io::stdin().read_line(&mut tmp).unwrap();
-    tmp.trim().parse::<usize>().expect("not number")
+    tmp.trim().parse::<i32>().expect("not number")
 }
 
-fn bfs(map : Vec<Vec<char>>) -> i32 {
-    const DX: [i32; 4] = [1, 0, -1, 0];
-    const DY: [i32; 4] = [0, 1, 0, -1];
-
-    let n = map.len();
-    let mut group = [[0; 100]; 100];
-    let mut visit = [[false; 100]; 100];
-    let mut cnt = 0;
-
-    for i in 0..n {
-        for j in 0..n {
-            if group[i][j] > 0 { continue; }
-
-            let mut queue : VecDeque<(usize, usize)> = VecDeque::new();
-
-            queue.push_back((i, j));
-            cnt += 1;
-
-            while !queue.is_empty() {
-                let cur = queue.pop_front().expect("Empty");
-
-                for d in 0..4usize {
-                    let nx = cur.0 as i32 + DX[d];
-                    let ny = cur.1 as i32 + DY[d];
-
-                    if nx < 0 || nx >= n as i32 || ny < 0 || ny >= n as i32 || map[cur.0][cur.1] != map[nx as usize][ny as usize] || visit[nx as usize][ny as usize] {
-                        continue;
-                    }
-
-                    group[nx as usize][ny as usize] = cnt;
-                    visit[nx as usize][ny as usize] = true;
-                    queue.push_back((nx as usize, ny as usize));
-                }
-            }
-        }
-    }
-
-    cnt
+fn inputIntegers() -> Vec<i32> {
+    let mut tmp = String::new();
+    std::io::stdin().read_line(&mut tmp).unwrap();
+    let split = tmp.split_whitespace();
+    let mut ret: Vec<i32> = Vec::new();
+    for i in split { ret.push(i.parse::<i32>().expect("not number")); }
+    ret
 }
 
 fn main() {
-    let n = inputInteger();
-    let mut map : Vec<Vec<char>> = Vec::new();
+    let arr = inputIntegers();
+    let K = arr[0];
+    let N = arr[1];
+    let mut arr: Vec<i32> = Vec::new();
 
-    for _i in 0..n {
-        let mut tmp = String::new();
-        std::io::stdin().read_line(&mut tmp).unwrap();
-        map.push(tmp.chars().collect());
-    }
+    for _ in 0..K { arr.push(inputInteger()); }
 
-    println!("{}", bfs(map.clone()));
+    arr.sort_by(|a, b| {
+        let mut x = a.to_string();
+        let mut y = b.to_string();
+        let z = y.clone();
 
-    for i in 0..n {
-        for j in 0..n {
-            if map[i][j] == 'R' {
-                map[i][j] = 'G';
+        y.push_str(&x);
+        x.push_str(&z);
+        y.cmp(&x)
+    });
+
+    let mut cop = arr.clone();
+    cop.sort_by(|a, b| {
+        let mut x = a.to_string();
+        let mut y = b.to_string();
+        let z = y.clone();
+
+        if x.len() != y.len() {
+            return y.len().cmp(&x.len());
+        }
+
+        y.push_str(&x);
+        x.push_str(&z);
+        y.cmp(&x)
+    });
+
+    for i in arr {
+        print!("{}", i);
+        if i == cop[0] {
+            for _ in 0..N - K {
+                print!("{}", i);
+                cop[0] = -1;
             }
         }
     }
-
-    println!("{}", bfs(map));
 }
