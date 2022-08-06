@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::io::{BufWriter, Write};
+
 fn inputInteger() -> i32 {
     let mut tmp = String::new();
     std::io::stdin().read_line(&mut tmp).unwrap();
@@ -16,6 +18,8 @@ fn inputIntegers() -> Vec<i32> {
 }
 
 fn main() {
+    let stdout = std::io::stdout();
+    let mut stdout = BufWriter::new(stdout.lock());
     let arr = inputIntegers();
     let K = arr[0];
     let N = arr[1];
@@ -49,10 +53,10 @@ fn main() {
     });
 
     for i in arr {
-        print!("{}", i);
+        stdout.write_all(i.to_string().as_ref()).expect("Panic");
         if i == cop[0] {
             for _ in 0..N - K {
-                print!("{}", i);
+                stdout.write_all(i.to_string().as_ref()).expect("Panic");
                 cop[0] = -1;
             }
         }
