@@ -1,64 +1,21 @@
 #![allow(non_snake_case)]
 
-use std::io::{BufWriter, Write};
+fn main()
+{
+    use std::fs::File;
+    use std::io::BufReader;
+    use rodio::{Decoder, OutputStream, source::Source};
 
-fn inputInteger() -> i32 {
-    let mut tmp = String::new();
-    std::io::stdin().read_line(&mut tmp).unwrap();
-    tmp.trim().parse::<i32>().expect("not number")
-}
+// Get a output stream handle to the default physical sound device
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+// Load a sound from a file, using a path relative to Cargo.toml
+    let file = BufReader::new(File::open("src/resource/046.wav").unwrap());
+// Decode that sound file into a source
+    let source = Decoder::new(file).unwrap();
+// Play the sound directly on the device
+    stream_handle.play_raw(source.convert_samples()).ok();
 
-fn inputIntegers() -> Vec<i32> {
-    let mut tmp = String::new();
-    std::io::stdin().read_line(&mut tmp).unwrap();
-    let split = tmp.split_whitespace();
-    let mut ret: Vec<i32> = Vec::new();
-    for i in split { ret.push(i.parse::<i32>().expect("not number")); }
-    ret
-}
-
-fn main() {
-    let stdout = std::io::stdout();
-    let mut stdout = BufWriter::new(stdout.lock());
-    let arr = inputIntegers();
-    let K = arr[0];
-    let N = arr[1];
-    let mut arr: Vec<i32> = Vec::new();
-
-    for _ in 0..K { arr.push(inputInteger()); }
-
-    arr.sort_by(|a, b| {
-        let mut x = a.to_string();
-        let mut y = b.to_string();
-        let z = y.clone();
-
-        y.push_str(&x);
-        x.push_str(&z);
-        y.cmp(&x)
-    });
-
-    let mut cop = arr.clone();
-    cop.sort_by(|a, b| {
-        let mut x = a.to_string();
-        let mut y = b.to_string();
-        let z = y.clone();
-
-        if x.len() != y.len() {
-            return y.len().cmp(&x.len());
-        }
-
-        y.push_str(&x);
-        x.push_str(&z);
-        y.cmp(&x)
-    });
-
-    for i in arr {
-        stdout.write_all(i.to_string().as_ref()).expect("Panic");
-        if i == cop[0] {
-            for _ in 0..N - K {
-                stdout.write_all(i.to_string().as_ref()).expect("Panic");
-                cop[0] = -1;
-            }
-        }
-    }
+// The sound plays in a separate audio thread,
+// so we need to keep the main thread alive while it's playing.
+    std::thread::sleep(std::time::Duration::from_millis(700));
 }
