@@ -1,8 +1,12 @@
 #![allow(unused)]
 
+// 추상화
+
 pub(crate) trait DS {
     fn new() -> Self;
 }
+
+// Queue 구현
 
 pub(crate) struct Queue<T: Copy + Sized>
 {
@@ -46,6 +50,8 @@ impl<T: Copy + Sized> Queue<T> {
         self.e - self.s
     }
 }
+
+// Stack 구현
 
 pub(crate) struct Stack<T: Copy + Sized>
 {
