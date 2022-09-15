@@ -1,23 +1,38 @@
 #![allow(non_snake_case)]
 
-mod sound_player;
-mod data_structures;
+mod real_number;
 
-use crate::data_structures::{DS, Stack, Queue};
+use real_number::Real;
+use real_number::Real::{Rat, Irr};
 
-fn main()
-{
-    sound_player::Play(String::from("src/resource/046.wav"), 2000);
+fn main() {
+    let mut x: Real = Rat(real_number::Rational{num:10, den:7});
+    let y: Real = Rat(real_number::Rational{num:20, den:9});
+    let z: Real = Irr(10.23487);
 
-    let mut q : Queue<(i32, i32)> = DS::new();
-    q.push((1, 2));
-    q.push((3, 4));
-    println!("{}", q.pop().unwrap().1);
-    println!("{}", q.pop().unwrap().1);
+    let mut a = 10;
+    {
+        dbg!(a);
+        let b = &mut a;
+        *b += 10;
+        dbg!(b);
+    }
+    dbg!(a);
+    let c;
+    {
+        let d = 20;
+        c = &d;
+        dbg!(c);
+        dbg!(d);
+    }
 
-    let mut s : Stack<(i32, i32)> = DS::new();
-    s.push((1, 2));
-    s.push((3, 4));
-    println!("{}", s.pop().unwrap().1);
-    println!("{}", s.pop().unwrap().1);
+    let mut y = y;
+    let mut w = &mut y;
+    *w = x + z;
+    dbg!(w);
+    w = &mut x;
+    dbg!(w);
+
+    println!("{} {}", x + y, x - y);
+    println!("{} {}", x + z, y + z);
 }
