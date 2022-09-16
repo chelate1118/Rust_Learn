@@ -2,6 +2,7 @@
 
 mod real_number;
 mod interface;
+mod borrow;
 
 use real_number::Real;
 use real_number::Real::{Rat, Irr};
